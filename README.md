@@ -23,10 +23,10 @@ and (4) which workflow steps were taken to run the analysis.
 ### 1. Input data
 
 This example uses ALICE Pb-Pb collision data input files. We can take a sample
-Pb-Pb ESD open data file that the ALICE collaboration released on the [CERN Open
-Data](http://opendata.cern.ch/) portal, for example the following sample taken
-at 3.5 TeV from run number 139038 in RunH 2010: (beware, the file is 360MB
-large)
+Pb-Pb ESD open data file that the ALICE collaboration released on the
+[CERN Open Data](http://opendata.cern.ch/) portal, for example the following
+sample taken at 3.5 TeV from run number 139038 in RunH 2010: (beware, the file
+is 360MB large)
 
 ```console
 $ mkdir -p __alice__data__2010__LHC10h_2__000139038
@@ -45,10 +45,10 @@ framework with the following source code files:
 
 - [env.sh](env.sh) - ALICE LEGO train system configuration
 - [generate.C](generate.C) - a macro to generate macros to run the ALICE LEGO
-train
+  train
 
 - [generator_customization.C](generator_customization.C) - generator
-customisations
+  customisations
 
 - [globalvariables.C](globalvariables.C) - global variables
 - [handlers.C](handlers.C) - data access handlers (ESD/AOD, collision/MC)
@@ -235,32 +235,36 @@ workflow steps and expected outputs:
 version: 0.3.0
 inputs:
   files:
-  - MLTrainDefinition.cfg
-  - data.txt
-  - env.sh
-  - generate.C
-  - generator_customization.C
-  - globalvariables.C
-  - handlers.C
-  - plot.C
-  - runTest.sh
-  - fix-env.sh
+    - MLTrainDefinition.cfg
+    - data.txt
+    - env.sh
+    - generate.C
+    - generator_customization.C
+    - globalvariables.C
+    - handlers.C
+    - plot.C
+    - runTest.sh
+    - fix-env.sh
 workflow:
   type: serial
   specification:
     steps:
-      - environment: 'docker.io/reanahub/reana-env-aliphysics:vAN-20180614-1'
+      - environment: "docker.io/reanahub/reana-env-aliphysics:vAN-20180614-1"
         commands:
-        - 'mkdir -p __alice__data__2010__LHC10h_2__000139038/'
-        - 'curl -fsOS --retry 9 http://opendata.cern.ch/eos/opendata/alice/2010/LHC10h/000139038/ESD/0003/AliESDs.root'
-        - 'mv AliESDs.root __alice__data__2010__LHC10h_2__000139038/'
-        - 'source fix-env.sh && source env.sh && aliroot -b -q generate.C | tee generation.log 2> generation.err'
-        - 'source fix-env.sh && source env.sh && export ALIEN_PROC_ID=12345678 && source ./lego_train.sh | tee stdout 2> stderr'
-        - 'source fix-env.sh && source env.sh && source ./lego_train_validation.sh | tee validation.log 2> validation.err'
-        - 'source fix-env.sh && source env.sh && root -b -q ./plot.C'
+          - "mkdir -p __alice__data__2010__LHC10h_2__000139038/"
+          - "curl -fsOS --retry 9
+            http://opendata.cern.ch/eos/opendata/alice/2010/LHC10h/000139038/ESD/0003/AliESDs.root"
+          - "mv AliESDs.root __alice__data__2010__LHC10h_2__000139038/"
+          - "source fix-env.sh && source env.sh && aliroot -b -q generate.C |
+            tee generation.log 2> generation.err"
+          - "source fix-env.sh && source env.sh && export ALIEN_PROC_ID=12345678
+            && source ./lego_train.sh | tee stdout 2> stderr"
+          - "source fix-env.sh && source env.sh && source
+            ./lego_train_validation.sh | tee validation.log 2> validation.err"
+          - "source fix-env.sh && source env.sh && root -b -q ./plot.C"
 outputs:
   files:
-  - plot.pdf
+    - plot.pdf
 ```
 
 We can now install the REANA command-line client, run the analysis and download
