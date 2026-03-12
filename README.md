@@ -7,24 +7,26 @@
 
 ## About
 
-This [REANA](http://www.reana.io/) reproducible analysis example performs ALICE LEGO
-train test run and validation. The procedure is used in ALICE collaboration particle
-physics analyses. Please see [arXiv:1502.06381](https://arxiv.org/abs/1502.06381) for
-more detailed description of the ALICE analysis train system.
+This [REANA](http://www.reana.io/) reproducible analysis example performs ALICE
+LEGO train test run and validation. The procedure is used in ALICE collaboration
+particle physics analyses. Please see
+[arXiv:1502.06381](https://arxiv.org/abs/1502.06381) for more detailed
+description of the ALICE analysis train system.
 
 ## Analysis structure
 
 Making a research data analysis reproducible means to provide "runnable recipes"
-addressing (1) where the input datasets are, (2) what software was used to analyse the
-data, (3) which computing environment was used to run the software, and (4) which
-workflow steps were taken to run the analysis.
+addressing (1) where the input datasets are, (2) what software was used to
+analyse the data, (3) which computing environment was used to run the software,
+and (4) which workflow steps were taken to run the analysis.
 
 ### 1. Input data
 
-This example uses ALICE Pb-Pb collision data input files. We can take a sample Pb-Pb ESD
-open data file that the ALICE collaboration released on the
-[CERN Open Data](http://opendata.cern.ch/) portal, for example the following sample taken
-at 3.5 TeV from run number 139038 in RunH 2010: (beware, the file is 360MB large)
+This example uses ALICE Pb-Pb collision data input files. We can take a sample
+Pb-Pb ESD open data file that the ALICE collaboration released on the [CERN Open
+Data](http://opendata.cern.ch/) portal, for example the following sample taken
+at 3.5 TeV from run number 139038 in RunH 2010: (beware, the file is 360MB
+large)
 
 ```console
 $ mkdir -p __alice__data__2010__LHC10h_2__000139038
@@ -33,7 +35,8 @@ $ curl -O http://opendata.cern.ch/eos/opendata/alice/2010/LHC10h/000139038/ESD/0
 $ cd ..
 ```
 
-Note that `data.txt` file should contain the path to the downloaded sample data file.
+Note that `data.txt` file should contain the path to the downloaded sample data
+file.
 
 ### 2. Analysis code
 
@@ -41,17 +44,21 @@ This example uses the [AliPhysics](https://github.com/alisw/AliPhysics) analysis
 framework with the following source code files:
 
 - [env.sh](env.sh) - ALICE LEGO train system configuration
-- [generate.C](generate.C) - a macro to generate macros to run the ALICE LEGO train
-- [generator_customization.C](generator_customization.C) - generator customisations
+- [generate.C](generate.C) - a macro to generate macros to run the ALICE LEGO
+train
+
+- [generator_customization.C](generator_customization.C) - generator
+customisations
+
 - [globalvariables.C](globalvariables.C) - global variables
 - [handlers.C](handlers.C) - data access handlers (ESD/AOD, collision/MC)
 - [runTest.sh](runTest.sh) - run LEGO train test and validation
 - [MLTrainDefinition.cfg](MLTrainDefinition.cfg) - train wagon definitions
 - [plot.C](plot.C) - plot sample histogram
 
-The user provides notably the [MLTrainDefinition.cfg](MLTrainDefinition.cfg) file which
-defines a set of train wagons that compose the analysis train run. In this example, the
-following wagons are defined:
+The user provides notably the [MLTrainDefinition.cfg](MLTrainDefinition.cfg)
+file which defines a set of train wagons that compose the analysis train run. In
+this example, the following wagons are defined:
 
 ```console
 $ grep Begin MLTrainDefinition.cfg
@@ -60,18 +67,18 @@ $ grep Begin MLTrainDefinition.cfg
 #Module.Begin        Run1NetPiBASE_CF_AP
 ```
 
-The first wagons are usually related to centralised data selection tasks, while the main
-user analysis is executed in the last `Run1NetPiBASE_CF_AP` wagon.
+The first wagons are usually related to centralised data selection tasks, while
+the main user analysis is executed in the last `Run1NetPiBASE_CF_AP` wagon.
 
-The `runTest.sh` script will take care of creating the train test run, running it, and
-validating its outputs.
+The `runTest.sh` script will take care of creating the train test run, running
+it, and validating its outputs.
 
 ### 3. Compute environment
 
-This example uses [AliPhysics](https://github.com/alisw/AliPhysics) analysis framework.
-It has been containerised as
-[reana-env-aliphysics](https://github.com/reanahub/reana-env-aliphysics) environment. You
-can fetch some wanted AliPhysics version from Docker Hub:
+This example uses [AliPhysics](https://github.com/alisw/AliPhysics) analysis
+framework. It has been containerised as
+[reana-env-aliphysics](https://github.com/reanahub/reana-env-aliphysics)
+environment. You can fetch some wanted AliPhysics version from Docker Hub:
 
 ```console
 $ docker pull docker.io/reanahub/reana-env-aliphysics:vAN-20180614-1
@@ -79,8 +86,9 @@ $ docker pull docker.io/reanahub/reana-env-aliphysics:vAN-20180614-1
 
 We shall use the `vAN-20180614-1` version for the present example.
 
-Note that if you would like to build a different AliPhysics version on your own, you can
-follow [reana-env-aliphysics](https://github.com/reanahub/reana-env-aliphysics)
+Note that if you would like to build a different AliPhysics version on your own,
+you can follow
+[reana-env-aliphysics](https://github.com/reanahub/reana-env-aliphysics)
 procedures and set `ALIPHYSICS_VERSION` environment variable appropriately:
 
 ```console
@@ -97,8 +105,8 @@ The researcher typically uses a single test run command:
 $ ./runTest.sh
 ```
 
-which performs all the tasks related to the analysis train generation, running and
-validation. Underneath, the following sequence of commands is called:
+which performs all the tasks related to the analysis train generation, running
+and validation. Underneath, the following sequence of commands is called:
 
 ```shell
 # generate the LEGO train run and validation files:
@@ -111,11 +119,12 @@ source ./lego_train.sh > stdout 2> stderr
 source ./lego_train_validation.sh > validation.log
 ```
 
-The produced log files indicate whether the train test run was successful and whether the
-output is validated.
+The produced log files indicate whether the train test run was successful and
+whether the output is validated.
 
-The computational workflow is therefore essentialy sequential in nature. We can use the
-REANA serial workflow engine and represent the analysis workflow as follows:
+The computational workflow is therefore essentialy sequential in nature. We can
+use the REANA serial workflow engine and represent the analysis workflow as
+follows:
 
 ```console
            START
@@ -170,13 +179,13 @@ REANA serial workflow engine and represent the analysis workflow as follows:
            STOP
 ```
 
-We shall see below how this sequence of commands is represented for the REANA serial
-workflow engine.
+We shall see below how this sequence of commands is represented for the REANA
+serial workflow engine.
 
 ### 5. Output results
 
-The output of the ALICE LEGO analysis train test run and validation is available in the
-`stdout` file. The success or failure is reported at the end:
+The output of the ALICE LEGO analysis train test run and validation is available
+in the `stdout` file. The success or failure is reported at the end:
 
 ```console
 $ tail -4 stdout
@@ -186,8 +195,8 @@ $ tail -4 stdout
 *******************************************************
 ```
 
-The test run will also create [ROOT](https://root.cern.ch/) output files that usually
-contain histograms.
+The test run will also create [ROOT](https://root.cern.ch/) output files that
+usually contain histograms.
 
 ```console
 $ ls -l AnalysisResults.root EventStat_temp.root
@@ -195,31 +204,32 @@ $ ls -l AnalysisResults.root EventStat_temp.root
 -rw-r--r-- 1 root root  31187 May 30 17:35 AnalysisResults.root
 ```
 
-The user typically uses the output files to produce final plots. For example, running
-`plot.C` output macro on the `AnalysisResults.root` output file will permit to visualise
-the centrality of accepted events:
+The user typically uses the output files to produce final plots. For example,
+running `plot.C` output macro on the `AnalysisResults.root` output file will
+permit to visualise the centrality of accepted events:
 
-![](https://raw.githubusercontent.com/reanahub/reana-demo-alice-lego-train-test-run/master/docs/plot.png)
+![image](https://raw.githubusercontent.com/reanahub/reana-demo-alice-lego-train-test-run/master/docs/plot.png)
 
-Low centralities mean that the the Pb particles hit each other a lot and many nucleons
-collide. High centralities mean that the Pb particles barely interacted and only very few
-nucelons did collide.
+Low centralities mean that the the Pb particles hit each other a lot and many
+nucleons collide. High centralities mean that the Pb particles barely interacted
+and only very few nucelons did collide.
 
 ## Running the example on REANA cloud
 
 There are two ways to execute this analysis example on REANA.
 
-If you would like to simply launch this analysis example on the REANA instance at CERN
-and inspect its results using the web interface, please click on the following badge:
+If you would like to simply launch this analysis example on the REANA instance
+at CERN and inspect its results using the web interface, please click on the
+following badge:
 
 [![image](https://www.reana.io/static/img/badges/launch-on-reana-at-cern.svg)](https://reana.cern.ch/launch?url=https%3A%2F%2Fgithub.com%2Freanahub%2Freana-demo-alice-lego-train-test-run&name=reana-demo-alice-lego-train-test-run)
 
-If you would like a step-by-step guide on how to use the REANA command-line client to
-launch this analysis example, please read on.
+If you would like a step-by-step guide on how to use the REANA command-line
+client to launch this analysis example, please read on.
 
-We start by creating a [reana.yaml](reana.yaml) file describing the above analysis
-structure with its inputs, code, runtime environment, computational workflow steps and
-expected outputs:
+We start by creating a [reana.yaml](reana.yaml) file describing the above
+analysis structure with its inputs, code, runtime environment, computational
+workflow steps and expected outputs:
 
 ```yaml
 version: 0.3.0
@@ -253,8 +263,8 @@ outputs:
   - plot.pdf
 ```
 
-We can now install the REANA command-line client, run the analysis and download the
-resulting plots:
+We can now install the REANA command-line client, run the analysis and download
+the resulting plots:
 
 ```console
 $ # create new virtual environment
@@ -283,5 +293,6 @@ $ reana-client download stdout
 $ reana-client download plot.pdf
 ```
 
-Please see the [REANA-Client](https://reana-client.readthedocs.io/) documentation for
-more detailed explanation of typical `reana-client` usage scenarios.
+Please see the [REANA-Client](https://reana-client.readthedocs.io/)
+documentation for more detailed explanation of typical `reana-client` usage
+scenarios.
